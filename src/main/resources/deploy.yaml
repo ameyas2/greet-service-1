@@ -1,0 +1,134 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: greet-service-ns
+  labels:
+    name: greet-service-ns
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: greet-service-ns
+  name: greet-service-depl
+  labels:
+    app: greet-service-depl-lbl
+spec:
+  replicas: 3
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+  selector:
+    matchLabels:
+      app: greet-service-pod-lbl
+  template:
+    metadata:
+      name: greet-service-pod
+      namespace: greet-service-ns
+      labels:
+        app: greet-service-pod-lbl
+    spec:
+      containers:
+        - image: ameyas5/greet-service:latest
+          name: greet-service
+          ports:
+            - name: svc-port
+              containerPort: 10001
+            - name: actuator-port
+              containerPort: 10012
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              cpu: 500m
+              memory: 1Gi
+            limits:
+              cpu: 1
+              memory: 2Gi
+          livenessProbe:
+            httpGet:
+              path: /greet-service/actuator/health/liveness
+              port: 10012
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 10
+          readinessProbe:
+            httpGet:
+              path: /greet-service/actuator/health/readiness
+              port: 10012
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            failureThreshold: 3
+            timeoutSeconds: 10
+          startupProbe:
+            httpGet:
+              path: /greet-service/actuator/health
+              port: 10012 # FIXED: Changed from 11002 to the real actuator port
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            failureThreshold: 18
+            timeoutSeconds: 5
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: greet-service-svc
+  labels:
+    app: greet-service-svc-lbl
+  namespace: greet-service-ns
+spec:
+  selector:
+    app: greet-service-pod-lbl
+  ports:
+    - name: svc-port
+      protocol: TCP
+      port: 10001
+      targetPort: 10001 # FIXED: Mapped to containerPort 10001
+    - name: actuator-port
+      protocol: TCP
+      port: 10012
+      targetPort: 10012
+
+---
+
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: greet-service-hpa
+  namespace: greet-service-ns
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: greet-service-depl
+  minReplicas: 3
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: 30    # scale if avg CPU > 30%
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: 40    # scale if avg memory > 40%
+  behavior: # Optional: Customize scaling behavior, including downscaling
+    scaleDown:
+      stabilizationWindowSeconds: 300 # Wait 5 minutes before scaling down
+      policies:
+        - type: Pods
+          value: 1
+          periodSeconds: 60 # Remove 1 pod every 60 seconds
+        - type: Percent
+          value: 10
+          periodSeconds: 60 # Remove 10% of pods every 60 seconds
+      selectPolicy: Min # Choose the policy that results in the minimum reduction

@@ -1,0 +1,24 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: greet-service-ingress
+  namespace: greet-service-ns
+spec:
+  ingressClassName: nginx
+  rules:
+    - http:
+        paths:
+          - pathType: Prefix
+            backend:
+              service:
+                name: greet-service-svc
+                port:
+                  number: 10012
+            path: /greet-service/actuator # MORE SPECIFIC PATH FIRST
+          - pathType: Prefix
+            backend:
+              service:
+                name: greet-service-svc
+                port:
+                  number: 10001
+            path: /greet-service
