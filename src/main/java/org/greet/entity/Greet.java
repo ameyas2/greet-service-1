@@ -3,6 +3,7 @@ package org.greet.entity;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Setter
 @Getter
@@ -11,10 +12,10 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class Greet {
-    private String header;
+    private UUID id;
+    private String title;
     private String description;
     private String author;
-    private LocalDateTime time;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
