@@ -3,6 +3,7 @@ package org.greet.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.datafaker.Faker;
+import org.greet.dto.GreetRequestDTO;
 import org.greet.dto.GreetResponseDTO;
 import org.greet.entity.Greet;
 import org.greet.repository.GreetRepository;
@@ -35,15 +36,21 @@ public class GreetService {
         return greetRepository.deleteById(id);
     }
 
-    public Greet save(Greet greet) {
-        greet.setId(UUID.randomUUID());
-        greet.setCreatedAt(LocalDateTime.now());
-        greet.setUpdatedAt(LocalDateTime.now());
+    public Greet save(GreetRequestDTO greetRequestDTO) {
+        Greet greet = Greet.builder()
+                .title(greetRequestDTO.getTitle())
+                .description(greetRequestDTO.getDescription())
+                .author(greetRequestDTO.getAuthor())
+                .id(UUID.randomUUID())
+                .createdAt(LocalDateTime.now())
+                .updatedAt(LocalDateTime.now())
+                .build();
+        log.info("Saving greet : {}", greet.getId());
         return greetRepository.save(greet);
     }
 
     public Greet update(Greet newGreet) {
-        log.info("Updating greet with id : {}", newGreet.getId());
+        log.info("Updating greet : {}", newGreet);
         Greet currentGreet = greetRepository.findById(newGreet.getId());
         if(currentGreet == null) {
             throw new NoSuchElementException("Greet not available for id: " + newGreet.getId());

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.IntStream;
 
 @Log4j2
@@ -22,7 +23,7 @@ public class GreetRepository {
 
     @PostConstruct
     private void init() {
-         greets = new HashMap<>();
+         greets = new ConcurrentHashMap<>();
 
         IntStream.range(0, 5).forEach(num -> {
             Greet greet = Greet.builder()

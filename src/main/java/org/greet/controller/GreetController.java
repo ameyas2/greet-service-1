@@ -2,6 +2,7 @@ package org.greet.controller;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.greet.dto.GreetRequestDTO;
 import org.greet.dto.GreetResponseDTO;
 import org.greet.entity.Greet;
 import org.greet.service.GreetService;
@@ -35,8 +36,8 @@ public class GreetController {
     }
 
     @PostMapping("")
-    public ResponseEntity<Greet> create(@RequestBody Greet greet) {
-        return ResponseEntity.ok(greetService.save(greet));
+    public ResponseEntity<Greet> create(@RequestBody GreetRequestDTO greetRequestDTO) {
+        return ResponseEntity.ok(greetService.save(greetRequestDTO));
     }
 
     @PutMapping("")
