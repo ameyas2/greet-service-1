@@ -21,27 +21,27 @@ public class GreetController {
     private GreetService greetService;
 
     @GetMapping("")
-    public ResponseEntity<Collection<Greet>> getAll() {
+    public ResponseEntity<Collection<GreetResponseDTO>> getAll() {
         return ResponseEntity.ok(greetService.getAllGreets());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Greet> getById(@PathVariable("id") UUID id) {
+    public ResponseEntity<GreetResponseDTO> getById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(greetService.findById(id));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Greet> deleteById(@PathVariable("id") UUID id) {
+    public ResponseEntity<GreetResponseDTO> deleteById(@PathVariable("id") UUID id) {
         return ResponseEntity.ok(greetService.delete(id));
     }
 
     @PostMapping("")
-    public ResponseEntity<Greet> create(@RequestBody GreetRequestDTO greetRequestDTO) {
+    public ResponseEntity<GreetResponseDTO> create(@RequestBody GreetRequestDTO greetRequestDTO) {
         return ResponseEntity.ok(greetService.save(greetRequestDTO));
     }
 
     @PutMapping("")
-    public ResponseEntity<Greet> update(@RequestBody Greet greet) {
+    public ResponseEntity<GreetResponseDTO> update(@RequestBody Greet greet) {
         return ResponseEntity.ok(greetService.update(greet));
     }
 }

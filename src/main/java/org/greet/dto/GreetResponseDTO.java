@@ -11,8 +11,11 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class GreetResponseDTO {
+    private String id;
     private String header;
     private String description;
     private String author;
     private LocalDateTime time;
+    private String message;
+    private String error;
 }
