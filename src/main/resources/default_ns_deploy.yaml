@@ -31,8 +31,11 @@ spec:
       labels:
         app: greet-service-pod-lbl
     spec:
+      imagePullSecrets:
+        - name: ghcr-secret
+
       containers:
-        - image: ameyas5/greet-service:latest
+        - image: ghcr.io/ameyas2/greet-service
           name: greet-service
           ports:
             - name: svc-port

@@ -21,8 +21,8 @@
         <lombok.version>1.18.48</lombok.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Override via -D or DOCKER_USERNAME / DOCKER_PASSWORD env vars -->
-        <docker.username>${env.DOCKER_USERNAME}</docker.username>
-        <docker.password>${env.DOCKER_PASSWORD}</docker.password>
+        <ghcr.username>${env.DOCKER_USERNAME}</ghcr.username>
+        <ghcr.password>${env.DOCKER_PASSWORD}</ghcr.password>
         <!-- Docker tags are usually lowercase; SNAPSHOT -> snapshot -->
         <!--<docker.image.tag>1.1.0-snapshot</docker.image.tag>-->
     </properties>
@@ -145,19 +145,19 @@
                     <from>
                         <!-- Jib's recommended Java 25 base image -->
                         <image>eclipse-temurin:25-jre</image>
-                        <auth>
-                            <username>${docker.username}</username>
-                            <password>${docker.password}</password>
-                        </auth>
+                        <!--<auth>
+                            <username>${ghcr.username}</username>
+                            <password>${ghcr.password}</password>
+                        </auth>-->
                     </from>
                     <to>
-                        <image>docker.io/${docker.username}/${project.artifactId}:${project.version}</image>
+                        <image>ghcr.io/${ghcr.username}/${project.artifactId}:${project.version}</image>
                         <tags>
                             <tag>latest</tag>
                         </tags>
                         <auth>
-                            <username>${docker.username}</username>
-                            <password>${docker.password}</password>
+                            <username>${ghcr.username}</username>
+                            <password>${ghcr.password}</password>
                         </auth>
                     </to>
                     <container>
